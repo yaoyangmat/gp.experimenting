@@ -1,4 +1,4 @@
-function [ K ] = covSEbasic( X,Z,hyp )
+function [ K ] = covSEbasic( hyp,X,Z )
 %COVSEbasic uses a simple squared exponential covariance function
 % X.shape = (m,dim)
 % Z.shape = (n,dim)

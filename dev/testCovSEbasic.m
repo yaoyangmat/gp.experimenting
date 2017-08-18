@@ -14,7 +14,7 @@ K = feval(covfunc{:}, hyp.cov, x);
 
 % Testing homemade covariance function
 hyp_test = [ell; sf];
-K_test = covSEbasic(x,x,hyp_test);
+K_test = covSEbasic(hyp_test,x,x);
 
 % Compare differences
 diff = abs(K - K_test);
