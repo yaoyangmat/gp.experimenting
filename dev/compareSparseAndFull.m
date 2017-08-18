@@ -6,24 +6,24 @@ clear all, close all;
 
 %% Basic parameters
 MAX_NUM_EVAL_FULL = 50;         % Maximum allowed function evals for full GP
-MAX_NUM_EVAL_SPARSE = 250;      % Maximum allowed function evals for sparse GP
-n_train = 5000;                 % Number of training points
-n_train_sparse = n_train/10;    % Number of inducing inputs / size of active set
+MAX_NUM_EVAL_SPARSE = 100;      % Maximum allowed function evals for sparse GP
+n_train = 800;                 % Number of training points
+n_sparse = n_train/10;          % Number of inducing inputs / size of active set
 n_test = 5000;                  % Number of test points
 n_dim = 15;                     % Size of UF1 problem
 n_responses = 2 ;               % Number of responses for UF1 problem
 %sn = 0.001;                    % Noise standard deviation. NOT INCLUDING NOISE for now (CHECK THIS OUT!!)
 
-n_trials = 10;
+n_trials = 1;
 useOld = 1;
 
 %% Initialise trackers
-diff_old = zeros(1, n_trials);
-diff_full = zeros(1, n_trials);
-diff_sparse = zeros(1, n_trials);
-hyperparam_old_time = zeros(1, n_trials);
-hyperparam_full_time = zeros(1, n_trials);
-hyperparam_sparse_time = zeros(1, n_trials);
+rmse_old = zeros(1, n_trials);
+rmse_full = zeros(1, n_trials);
+rmse_sparse = zeros(1, n_trials);
+time_old = zeros(1, n_trials);
+time_full = zeros(1, n_trials);
+time_sparse = zeros(1, n_trials);
 
 for j = 1:n_trials
     %% Setting up data - training and test
@@ -72,22 +72,22 @@ for j = 1:n_trials
         fprintf('Optimising hyperparameters for old GP...\n')
         tic;
         gpdata = gaussianprocessregression('Train', X_train, y_train, gpoptions);
-        hyperparam_old_time(j) = toc;
+        time_old(j) = toc;
 
         % Generate predictions
         ymu_old = gaussianprocessregression('Evaluate', X_test, gpdata);
-        diff_old(j) = compute_RMSE(ymu_old,y_test);
+        rmse_old(j) = compute_RMSE(ymu_old,y_test);
     end
     %% Full GP
     % Optimise hyperparameters
     fprintf('Optimising hyperparameters for full GP...\n')
     tic;
     hyp = minimize_minfunc(hyp,@gp,-MAX_NUM_EVAL_FULL,inf,emptymean,cov,lik,X_train,y_train);      
-    hyperparam_full_time(j) = toc;
+    time_full(j) = toc;
 
     % Generate predictions
     [ymu,ys2] = gp(hyp,inf,emptymean,cov,lik,X_train,y_train,X_test);                 % dense prediction
-    diff_full(j) = compute_RMSE(ymu,y_test);
+    rmse_full(j) = compute_RMSE(ymu,y_test);
 
     %% Reset hyperparameters for sparse GP
     % Use covariance function (from Swordfish)
@@ -100,7 +100,7 @@ for j = 1:n_trials
     % indices = randperm(n_train);
     % sparse_indices = indices(1:n_train_sparse);
     % xu = X_train(sparse_indices,:);
-    xu = lhs(lb,ub,n_train_sparse);
+    xu = lhs(lb,ub,n_sparse);
     %xu = [rand(n_train_sparse,1), rand(n_train_sparse,n_dim-1)*2-1];       
     cov = {'apxSparse',cov,xu};                                            % change covariance function to use sparse methods
 
@@ -109,25 +109,30 @@ for j = 1:n_trials
     fprintf('Optimising hyperparameters for sparse GP...\n')
     tic;
     hyp = minimize_minfunc(hyp,@gp,-MAX_NUM_EVAL_SPARSE,inf,emptymean,cov,lik,X_train,y_train);  % exactly the same as above, except cov is different
-    hyperparam_sparse_time(j) = toc;
+    time_sparse(j) = toc;
 
     % Generate predictions
     [ymu_spgp,ys2_spgp] = gp(hyp,inf,emptymean,cov,lik,X_train,y_train,X_test);
-    diff_sparse(j) = compute_RMSE(ymu_spgp,y_test);
+    rmse_sparse(j) = compute_RMSE(ymu_spgp,y_test);
 
 end
 %% Exploring results
-fprintf('Average validation results performed on %d test points over %d trials...\n', n_test, n_trials)
-if useOld
-    fprintf('RMSE for old GP: %f\n', mean(diff_old))
-end
-fprintf('RMSE for full GP: %f\n', mean(diff_full))
-fprintf('RMSE for sparse SPGP: %f\n', mean(diff_sparse))
-fprintf('\n')
-if useOld
-   fprintf('Time taken to optimise hyperparameters for old GP: %fs\n', mean(hyperparam_old_time)) 
-end
-fprintf('Time taken to optimise hyperparameters for full GP: %fs\n', mean(hyperparam_full_time))
-fprintf('Time taken to optimise hyperparameters for sparse GP: %fs\n', mean(hyperparam_sparse_time))
+fprintf('\n---Printing Results---\n');
+fprintf('Solving UF1-%d, N = %d, M = %d, evals = %d, sparse_evals = %d\n', ...
+                n_dim, n_train, n_sparse, MAX_NUM_EVAL_FULL, MAX_NUM_EVAL_SPARSE);
+fprintf('Average validation results on %d test points over %d trials...\n', n_test, n_trials)
 
-save('RMSE log.mat', 'diff_old', 'diff_full', 'diff_sparse')
+if useOld
+    Methods = {'Old';'Full';'Sparse'};
+    RMSE = [mean(rmse_old); mean(rmse_full); mean(rmse_sparse)];
+    Time = [mean(time_old); mean(time_full); mean(time_sparse)];
+    T = table(RMSE,Time,'RowNames',Methods);
+else
+    Methods = {'Full';'Sparse'};
+    RMSE = [mean(rmse_full); mean(rmse_sparse)];
+    Time = [mean(time_full); mean(time_sparse)];
+    T = table(RMSE,Time,'RowNames',Methods);
+end
+
+disp(T)
+%save('RMSE log.mat', 'rmse_old', 'rmse_full', 'rmse_sparse')
