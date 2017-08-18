@@ -10,7 +10,7 @@ MAX_NUM_EVAL_SPARSE = 250;      % Maximum allowed function evals for sparse GP
 n_train = 5000;                 % Number of training points
 n_train_sparse = n_train/10;    % Number of inducing inputs / size of active set
 n_test = 5000;                  % Number of test points
-n_dim = 15;                      % Size of UF1 problem
+n_dim = 15;                     % Size of UF1 problem
 n_responses = 2 ;               % Number of responses for UF1 problem
 %sn = 0.001;                    % Noise standard deviation. NOT INCLUDING NOISE for now (CHECK THIS OUT!!)
 
@@ -129,4 +129,4 @@ if useOld
 end
 fprintf('Time taken to optimise hyperparameters for full GP: %fs\n', mean(hyperparam_full_time))
 fprintf('Time taken to optimise hyperparameters for sparse GP: %fs\n', mean(hyperparam_sparse_time))
-
+save('results.mat', 'diff_old', 'diff_full' ,'diff_sparse')
