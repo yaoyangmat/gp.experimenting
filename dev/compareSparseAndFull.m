@@ -7,15 +7,15 @@ clear all, close all;
 %% Basic parameters
 MAX_NUM_EVAL_FULL = 50;         % Maximum allowed function evals for full GP
 MAX_NUM_EVAL_SPARSE = 200;      % Maximum allowed function evals for sparse GP
-n_train = 800;                 % Number of training points
+n_train = 3000;                 % Number of training points
 n_train_sparse = n_train/10;    % Number of inducing inputs / size of active set
 n_test = 5000;                  % Number of test points
-n_dim = 3;                      % Size of UF1 problem
+n_dim = 10;                      % Size of UF1 problem
 n_responses = 2 ;               % Number of responses for UF1 problem
 %sn = 0.001;                    % Noise standard deviation. NOT INCLUDING NOISE for now (CHECK THIS OUT!!)
 
 
-n_trials = 20;
+n_trials = 10;
 useOld = 1;
 
 %% Initialise trackers
@@ -130,4 +130,6 @@ if useOld
 end
 fprintf('Time taken to optimise hyperparameters for full GP: %fs\n', mean(hyperparam_full_time))
 fprintf('Time taken to optimise hyperparameters for sparse GP: %fs\n', mean(hyperparam_sparse_time))
+
+% save('RMSE log.mat', 'diff_old', 'diff_full', 'diff_sparse')
 
