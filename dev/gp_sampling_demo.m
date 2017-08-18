@@ -10,15 +10,15 @@ s = 1e-6;
 mu = 0; 
 ell = 1;            % default: 1
 sf = 0.5;           % default: 0.5    
-% hyp = log[ell,sf];
-% cov = @covSEbasic;
+hyp_t = [ell;sf];
+cov_t = @covSEbasic;
 
 cov = {@covSEard}; 
 logtheta0 = log([ell;sf]);
 hyp.cov = logtheta0;  
 emptymean = [];
 lik = {@likGauss};    
-hyp.lik = -4;       % default: -4
+hyp.lik = -6;       % default: -4
 inf = @infGaussLik;
 
 mu_test = ones(n_test,1)*mu;
@@ -54,7 +54,7 @@ for i = 1:n_iters
         mu_star = 0; s2_star = 1;
     else
         [mu_star,s2_star] = gp(hyp,inf,emptymean,cov,lik,x_train,y_train,x_star);
-        %[mu_star, s2_star] = gp_predict(hyp, cov, x_train, y_train, x_star);
+        %[mu_star, s2_star] = gp_predict(hyp_t, cov_t, x_train, y_train, x_star);
     end
     
     % Sample y_star from predicted distribution
@@ -67,7 +67,7 @@ for i = 1:n_iters
     
     % Retrain predicted function on X_test
     [mu_test, s2_test] = gp(hyp,inf,emptymean,cov,lik,x_train,y_train,x_test);
-    %[mu_test, s2_test] = gp_predict(hyp, cov, x_train, y_train, x_test);
+    %[mu_test, s2_test] = gp_predict(hyp_t, cov_t, x_train, y_train, x_test);
     s_test = sqrt(s2_test);
     
     % Plot results
