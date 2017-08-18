@@ -21,4 +21,7 @@ addpath([mydir,'mean'])
 addpath([mydir,'prior'])
 addpath([mydir,'util'])
 
+addpath([mydir,'dev'])
+addpath([mydir,'dev',filesep,'util'])
+
 clear me mydir

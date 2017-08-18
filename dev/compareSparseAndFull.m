@@ -125,13 +125,13 @@ fprintf('Average validation results on %d test points over %d trials...\n', n_te
 if useOld
     Methods = {'Old';'Full';'Sparse'};
     RMSE = [mean(rmse_old); mean(rmse_full); mean(rmse_sparse)];
-    Time = [mean(time_old); mean(time_full); mean(time_sparse)];
-    T = table(RMSE,Time,'RowNames',Methods);
+    TimeInSeconds = [mean(time_old); mean(time_full); mean(time_sparse)];
+    T = table(RMSE,TimeInSeconds,'RowNames',Methods);
 else
     Methods = {'Full';'Sparse'};
     RMSE = [mean(rmse_full); mean(rmse_sparse)];
-    Time = [mean(time_full); mean(time_sparse)];
-    T = table(RMSE,Time,'RowNames',Methods);
+    TimeInSeconds = [mean(time_full); mean(time_sparse)];
+    T = table(RMSE,TimeInSeconds,'RowNames',Methods);
 end
 
 disp(T)

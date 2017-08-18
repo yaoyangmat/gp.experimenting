@@ -46,5 +46,6 @@ function K = IncreaseNoiseLevel(hyp,cov,x,opt)
 MINLOGNOISE = -6;
 
 if hyp.cov(end)<MINLOGNOISE; hyp.cov(end)=MINLOGNOISE; end
+if hyp.lik<MINLOGNOISE; hyp.lik=MINLOGNOISE; end
 K = apx(hyp,cov,x,opt);
 
