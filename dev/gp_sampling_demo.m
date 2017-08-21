@@ -9,20 +9,21 @@ s = 1e-6;
 % Initialise GP prior -> set mean=0 and kernel parameters
 mu = 0; 
 ell = 1;            % default: 1
-sf = 0.5;           % default: 0.5    
-hyp_t = [ell;sf];
+sn = 0.5;           % default: 0.5    
+hyp_t = [ell;sn];
 cov_t = @covSEbasic;
 
 cov = {@covSEard}; 
-logtheta0 = log([ell;sf]);
+logtheta0 = log([ell;sn]);
 hyp.cov = logtheta0;  
 emptymean = [];
 lik = {@likGauss};    
-hyp.lik = -6;       % default: -4
+sy = exp(-6);       % default: -4
+hyp.lik = log(sy);       
 inf = @infGaussLik;
 
 mu_test = ones(n_test,1)*mu;
-s2_test = ones(n_test,1);
+s2_test = ones(n_test,1)*sn.^2;
 s_test = sqrt(s2_test);
 
 fig = figure; ax = gca; 
