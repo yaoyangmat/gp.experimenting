@@ -6,11 +6,11 @@ clear all, close all;
 
 %% Basic parameters
 MAX_NUM_EVAL_FULL = 50;         % Maximum allowed function evals for full GP
-MAX_NUM_EVAL_SPARSE = 100;      % Maximum allowed function evals for sparse GP
+MAX_NUM_EVAL_SPARSE = 200;      % Maximum allowed function evals for sparse GP
 n_train = 800;                 % Number of training points
 n_sparse = n_train/10;          % Number of inducing inputs / size of active set
 n_test = 5000;                  % Number of test points
-n_dim = 15;                     % Size of UF1 problem
+n_dim = 3;                     % Size of UF1 problem
 n_responses = 2 ;               % Number of responses for UF1 problem
 %sn = 0.001;                    % Noise standard deviation. NOT INCLUDING NOISE for now (CHECK THIS OUT!!)
 
@@ -86,6 +86,7 @@ for j = 1:n_trials
     time_full(j) = toc;
 
     % Generate predictions
+    [nlZ1,dnlZ1] = gp(hyp,inf,emptymean,cov,lik,X_train,y_train); nlZ1
     [ymu,ys2] = gp(hyp,inf,emptymean,cov,lik,X_train,y_train,X_test);                 % dense prediction
     rmse_full(j) = compute_RMSE(ymu,y_test);
 
@@ -112,6 +113,7 @@ for j = 1:n_trials
     time_sparse(j) = toc;
 
     % Generate predictions
+    [nlZ2,dnlZ2] = gp(hyp,inf,emptymean,cov,lik,X_train,y_train); nlZ2
     [ymu_spgp,ys2_spgp] = gp(hyp,inf,emptymean,cov,lik,X_train,y_train,X_test);
     rmse_sparse(j) = compute_RMSE(ymu_spgp,y_test);
 
