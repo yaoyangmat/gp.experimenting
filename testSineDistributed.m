@@ -101,6 +101,7 @@ for i=1:length(methods)
     scatter(X_train, y_train, 'x');
     jbfill(X_test', ymu_dgp'+2*ys_dgp', ymu_dgp'-2*ys_dgp', 'b', 'k', 1, 0.2);
     jbfill(X_test', ymu'+2*ys', ymu'-2*ys', 'g', 'k', 1, 0.2);
+    ylim([-10 10]);
     title(methods{i});
     legend('Distributed', 'Full');
     hold off;
