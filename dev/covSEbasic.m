@@ -11,12 +11,12 @@ assert(length(hyp)==dim_x + 1, 'The number of hyperparameters do not match.');
 
 % Extract kernel hyperparameters
 ell = hyp(1:end-1);
-sf = hyp(end);
+sn = hyp(end);
 
 a = diag(1./ell) * X';
 b = diag(1./ell) * Z';
 
-K = sf.^2 .* exp(-sqrdist(a,b)/2);
+K = sn.^2 .* exp(-sqrdist(a,b)/2);
 
 end
 
