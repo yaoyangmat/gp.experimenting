@@ -15,7 +15,7 @@ n_responses = 2 ;               % Number of responses for UF1 problem
 %sn = 0.001;                    % Noise standard deviation. NOT INCLUDING NOISE for now (CHECK THIS OUT!!)
 
 n_trials = 1;
-useOld = 1;
+useOld = 0;
 
 %% Initialise trackers
 rmse_old = zeros(1, n_trials);

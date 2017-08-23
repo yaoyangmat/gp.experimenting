@@ -19,7 +19,7 @@ y_train_rand = y_train(random_order);
 X_train_DGP = split_1d_data(X_train_rand, M);
 y_train_DGP = split_1d_data(y_train_rand, M);
 
-X_test = linspace(-15, 15, n_test)';
+X_test = linspace(5, 40, n_test)';
 y_test = sin(X_test);
 
 %% Initialize hyp, cov, mean, lik
@@ -103,7 +103,7 @@ for i=1:length(methods)
     jbfill(X_test', ymu'+2*ys', ymu'-2*ys', 'g', 'k', 1, 0.2);
     ylim([-10 10]);
     title(methods{i});
-    legend('Distributed', 'Full');
+    legend('Distributed', 'Full', 'Data points');
     hold off;
 end
 foo = 1;
