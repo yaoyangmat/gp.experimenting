@@ -10,11 +10,11 @@ x = rand(n_samples, n_dim);
 % Using GPML covariance function
 covfunc = {@covSEard}; 
 hyp.cov = log([ell; sf]);
+hyp.lik = log(0);
 K = feval(covfunc{:}, hyp.cov, x);
 
 % Testing homemade covariance function
-hyp_test = [ell; sf];
-K_test = covSEbasic(hyp_test,x,x);
+K_test = kernel(hyp.cov,x,x);
 
 % Compare differences
 diff = abs(K - K_test);

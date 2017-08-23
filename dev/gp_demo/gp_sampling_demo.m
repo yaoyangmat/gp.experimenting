@@ -2,25 +2,25 @@ clear all; clc;
 lb = -5; ub = 5;
 y_min = -4; y_max = 4;
 n_test = 100;
-x_test = linspace(lb,ub,n_test);
-x_test = x_test';
-s = 1e-6;
+x_test = linspace(lb,ub,n_test)';
 
 % Initialise GP prior -> set mean=0 and kernel parameters
 mu = 0; 
 ell = 1;            % default: 1
 sn = 0.5;           % default: 0.5    
-hyp_t = [ell;sn];
-cov_t = @covSEbasic;
+sy = exp(-4);       % default: -4
 
-cov = {@covSEard}; 
-logtheta0 = log([ell;sn]);
-hyp.cov = logtheta0;  
-emptymean = [];
-lik = {@likGauss};    
-sy = exp(-6);       % default: -4
-hyp.lik = log(sy);       
+% Using GPML
+cov = {@covSEard};
+lik = {@likGauss};  
 inf = @infGaussLik;
+
+emptymean = [];
+hyp.cov = log([ell;sn]);
+hyp.lik = log(sy);       
+
+% Using homemade GP
+cov_t = @kernel;
 
 mu_test = ones(n_test,1)*mu;
 s2_test = ones(n_test,1)*sn.^2;
@@ -54,8 +54,8 @@ for i = 1:n_iters
     if isempty(x_train)
         mu_star = 0; s2_star = 1;
     else
-        [mu_star,s2_star] = gp(hyp,inf,emptymean,cov,lik,x_train,y_train,x_star);
-        %[mu_star, s2_star] = gp_predict(hyp_t, cov_t, x_train, y_train, x_star);
+        %[mu_star,s2_star] = gp(hyp,inf,emptymean,cov,lik,x_train,y_train,x_star);
+        [mu_star, s2_star] = gp_predict(hyp, cov_t, x_train, y_train, x_star);
     end
     
     % Sample y_star from predicted distribution
@@ -67,8 +67,8 @@ for i = 1:n_iters
     y_train = [y_train; y_star];   
     
     % Retrain predicted function on X_test
-    [mu_test, s2_test] = gp(hyp,inf,emptymean,cov,lik,x_train,y_train,x_test);
-    %[mu_test, s2_test] = gp_predict(hyp_t, cov_t, x_train, y_train, x_test);
+    %[mu_test, s2_test] = gp(hyp,inf,emptymean,cov,lik,x_train,y_train,x_test);
+    [mu_test, s2_test] = gp_predict(hyp, cov_t, x_train, y_train, x_test);
     s_test = sqrt(s2_test);
     
     % Plot results
