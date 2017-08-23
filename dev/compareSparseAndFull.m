@@ -7,15 +7,15 @@ clear all, close all;
 %% Basic parameters
 MAX_NUM_EVAL_FULL = 50;         % Maximum allowed function evals for full GP
 MAX_NUM_EVAL_SPARSE = 100;      % Maximum allowed function evals for sparse GP
-n_train = 800;                 % Number of training points
+n_train = 3000;                 % Number of training points
 n_sparse = n_train/10;          % Number of inducing inputs / size of active set
 n_test = 5000;                  % Number of test points
-n_dim = 15;                     % Size of UF1 problem
+n_dim = 10;                     % Size of UF1 problem
 n_responses = 2 ;               % Number of responses for UF1 problem
 %sn = 0.001;                    % Noise standard deviation. NOT INCLUDING NOISE for now (CHECK THIS OUT!!)
 
 n_trials = 1;
-useOld = 1;
+useOld = 0;
 
 %% Initialise trackers
 rmse_old = zeros(1, n_trials);

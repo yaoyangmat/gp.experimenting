@@ -4,12 +4,13 @@ disp('-------------------------------')
 close all; clear all;
 %% Basic parameters
 MAX_NUM_EVAL = 30;         % Maximum allowed function evals
-n_train = 1000;             % Number of training points
+n_train = 100000;             % Number of training points
 n_test = 5000;              % Number of test points
-n_dim = 3;                  % Size of UF1 problem
+n_dim = 10;                  % Size of UF1 problem
 n_responses = 2 ;           % Number of responses for UF1 problem
-M = 10;                     % Number of sets for distributed GP
+M = 1000;                     % Number of sets for distributed GP
 %sn = 0.001;                   % Noise standard deviation. NOT INCLUDING NOISE for now (CHECK THIS OUT!!)
+use_full = 0;
 %% Setting up data - training and test
 % Create training data
 lb = zeros(1,n_dim);
@@ -37,8 +38,6 @@ for i=1:n_test
     tmp_ys(i,:) = UF1(X_test(i,:)')';
 end
 y_test = tmp_ys(:,1);
-% X_test = linspace(-0.9, 0.9, 100)';
-% y_test = sin(X_test)';
 
 %% Initialize hyp, cov, mean, lik
 % Initialise guess: logtheta0 (from Swordfish)
@@ -55,15 +54,16 @@ hyp.lik = logtheta0(end);
 inf = @infGaussLik;
 
 %% Use Full GP
-fprintf('Optimising hyperparameters for full GP...\n')
-tic;
-hyp = minimize_minfunc(hyp,@gp,-MAX_NUM_EVAL,inf,emptymean,cov,lik,X_train,y_train);      
-time_full = toc;
+if use_full
+    fprintf('Optimising hyperparameters for full GP...\n')
+    tic;
+    hyp = minimize_minfunc(hyp,@gp,-MAX_NUM_EVAL,inf,emptymean,cov,lik,X_train,y_train);      
+    time_full = toc;
 
-% Generate predictions
-[ymu,ys2] = gp(hyp,inf,emptymean,cov,lik,X_train,y_train,X_test);                 % dense prediction
-rmse_full = compute_RMSE(ymu,y_test);
-
+    % Generate predictions
+    [ymu,ys2] = gp(hyp,inf,emptymean,cov,lik,X_train,y_train,X_test);                 % dense prediction
+    rmse_full = compute_RMSE(ymu,y_test);
+end
 %% Initialize hyp, cov, mean, lik again
 % Initialise guess: logtheta0 (from Swordfish)
 stdX = std(X_train)';
@@ -79,20 +79,23 @@ hyp.lik = logtheta0(end);
 inf = @infGaussLik;
 
 %% Optimise hyperparameters for distributed GP
-fprintf('Optimising hyperparameters...\n')
+fprintf('Optimising hyperparameters for distributed GP...\n')
 tic;
 hyp = minimize_minfunc(hyp,@gp_distributed_dev,-MAX_NUM_EVAL,inf,emptymean,cov,lik,X_train_DGP,y_train_DGP);
 time_dgp = toc;
 
-[ymu_dgp,ys2_dgp] = gp_distributed_dev(hyp,inf,emptymean,cov,lik,X_train_DGP,y_train_DGP,X_test);
+% a = gcp;
+% disp(a.NumWorkers) % somehow only 2 workers, even though computer has 4 cores
+
+[ymu_dgp,ys2_dgp] = gp_distributed_dev(hyp,inf,emptymean,cov,lik,X_train_DGP,y_train_DGP,X_test,'rBCM');
 rmse_dgp = compute_RMSE(ymu_dgp,y_test);
 
 
 %% Printing results
 fprintf('Validation results performed on %d test points...\n', n_test)
-fprintf('RMSE for full GP: %f\n', rmse_full)
+if use_full, fprintf('RMSE for full GP: %f\n', rmse_full); end
 fprintf('RMSE for distributed GP: %f\n', rmse_dgp)
-fprintf('Time taken for full GP: %f\n', time_full)
+if use_full, fprintf('Time taken for full GP: %f\n', time_full); end
 fprintf('Time taken for distributed GP: %f\n', time_dgp)
 
 %% HELPER FUNCTIONS
