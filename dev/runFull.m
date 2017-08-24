@@ -1,4 +1,4 @@
-function [ rmse, time, params ] = runFull( MAX_NUM_EVAL, n_train, n_test, n_dim, n_responses )
+function [ rmse, time ] = runFull( MAX_NUM_EVAL, n_train, n_test, n_dim, n_responses )
 %% Setting up data - training and test
 % Create training data
 lb = zeros(1,n_dim);
