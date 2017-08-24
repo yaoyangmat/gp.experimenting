@@ -15,7 +15,7 @@ n_responses = 2 ;               % Number of responses for UF1 problem
 %sn = 0.001;                    % Noise standard deviation. NOT INCLUDING NOISE for now (CHECK THIS OUT!!)
 
 n_trials = 1;
-useOld = 0;
+useOld = 1;
 
 %% Initialise trackers
 rmse_old = zeros(1, n_trials);
@@ -75,7 +75,7 @@ for j = 1:n_trials
         time_old(j) = toc;
 
         % Generate predictions
-        ymu_old = gaussianprocessregression('Evaluate', X_test, gpdata);
+        [ymu_old,ys2_old] = gaussianprocessregression('Evaluate', X_test, gpdata);
         rmse_old(j) = compute_RMSE(ymu_old,y_test);
     end
     %% Full GP

@@ -2,20 +2,16 @@ function [ ymu, ys2 ] = gp_predict( hyp, cov, x, y, xs )
 %GP_PREDICT 
     
     % Hyperparameters
-    % hyp.cov = log([ell, sn])
-    % hyp.lik = log(sy)
+    % hyp.cov = log([ell; sn; sy])
     
-    sy2 = exp(hyp.lik*2);
+    K = cov(hyp.cov,x);
+    [Kss, Kstar] = cov(hyp.cov,x,xs);
     
-    K = cov(hyp.cov,x,x);
-    K_star = cov(hyp.cov,x,xs);
-    K_ = cov(hyp.cov,xs,xs);
+    L = chol(K)';
     
-    L = chol(K + sy2*eye(length(x)))';
-    
-    Lk = L\K_star;
+    Lk = L\Kstar;
     ymu = Lk' * (L\y);
-    ys2 = diag(K_) - sum(Lk.^2, 1)';
+    ys2 = Kss - sum(Lk.^2, 1)';
 
 end
 

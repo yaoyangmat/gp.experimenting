@@ -11,12 +11,12 @@ sn = 0.5;           % default: 0.5
 sy = exp(-4);       % default: -4
 
 % Using GPML
-cov = {@covSEard};
+cov = {@covSum, {@covSEard,@covNoise}};
 lik = {@likGauss};  
 inf = @infGaussLik;
 
 emptymean = [];
-hyp.cov = log([ell;sn]);
+hyp.cov = log([ell;sn;sy]);
 hyp.lik = log(sy);       
 
 % Using homemade GP
