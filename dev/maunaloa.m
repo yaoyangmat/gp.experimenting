@@ -19,13 +19,13 @@ k3 = @covRQiso;                      % fluctations with different length-scales
 k4 = @covSEiso;                 % very short term (month to month) correlations 
 covfunc = {@covSum, {k1, k2, k3, k4}};                % add up covariance terms
 
-% meanfunc = {@meanSum, {@meanLinear, @meanConst}};
-meanfunc = [];
+meanfunc = {@meanSum, {@meanLinear, @meanConst}};
+%meanfunc = [];
 
 hyp.cov = [4 4 0 0 1 4 0 0 -1 -2 -2]; 
 hyp.lik = -2;
-% hyp.mean = [1.6 -2630];
-hyp.mean = [];
+hyp.mean = [1.6 -2630];
+%hyp.mean = [];
 
 [hyp, fX, i] = ...                                             % fit the GP model
      minimize(hyp, @gp, -500, @infExact, meanfunc, covfunc, @likGauss, x, y);

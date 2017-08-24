@@ -15,7 +15,7 @@ figure;
 title('Effect of varying the length scale');
 hold on; 
 for i = 1:length(ell)
-    hyp.cov = log([ell(i); sf; sy]);
+    hyp = log([ell(i); sf; sy]);
     y = joint_sampling_demo(x,hyp);
     plot(x,y);
     legendInfo{i} = ['ell = ' num2str(ell(i))];
@@ -30,7 +30,7 @@ figure;
 title('Effect of varying signal noise');
 hold on; 
 for i = 1:length(sf)
-    hyp.cov = log([ell; sf(i); sy]);
+    hyp = log([ell; sf(i); sy]);
     y = joint_sampling_demo(x,hyp);
     plot(x,y);
     legendInfo{i} = ['sf = ' num2str(sf(i))];

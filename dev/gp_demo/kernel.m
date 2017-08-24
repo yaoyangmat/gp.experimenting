@@ -47,11 +47,8 @@ switch nargin
             elseif z == dim + 2                     % signal noise
                 A = 2*sy^2*eye(size(x,1));
             end
-            
         end
-
 end
-
 
 end
 

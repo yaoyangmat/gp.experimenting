@@ -15,7 +15,8 @@ hyp.lik = log(sy);
 K = feval(covfunc{:}, hyp.cov, x);
 
 % Testing homemade covariance function
-K_test = kernel(hyp.cov,x);
+hyp = log([ell; sf; sy]);
+K_test = kernel(hyp,x);
 
 % Compare differences
 diff = abs(K - K_test);

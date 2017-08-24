@@ -4,8 +4,8 @@ function [ ymu, ys2 ] = gp_predict( hyp, cov, x, y, xs )
     % Hyperparameters
     % hyp.cov = log([ell; sn; sy])
     
-    K = cov(hyp.cov,x);
-    [Kss, Kstar] = cov(hyp.cov,x,xs);
+    K = cov(hyp,x);
+    [Kss, Kstar] = cov(hyp,x,xs);
     
     L = chol(K)';
     
