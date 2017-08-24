@@ -23,7 +23,7 @@ M = dist_n_train/200;
 
 %% RUN AND SAVE
 fgp_history = run(full_MAX_NUM_EVAL, full_n_train, n_test, n_dim, n_responses, 'runFull');
-sgp_history = run(sparse_MAX_NUM_EVAL, sparse_n_train, n_test, n_dim, n_responses, 'runSparse', n_sparse);
+% sgp_history = run(sparse_MAX_NUM_EVAL, sparse_n_train, n_test, n_dim, n_responses, 'runSparse', n_sparse);
 dgp_history = run(dist_MAX_NUM_EVAL, dist_n_train, n_test, n_dim, n_responses, 'runDist', M);
 
 save('all_results_20.mat', 'fgp_history', 'sgp_history', 'dgp_history')

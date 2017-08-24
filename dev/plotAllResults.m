@@ -15,4 +15,4 @@ ylabel('RMSE')
 xlabel('Time taken for optimisation of hyperparameters')
 lg = legend('Full', 'Sparse', 'Distributed');
 lg.FontSize = 14;
-title('UF1 10 dimension GP validation results')
+title('UF1 15 dimension GP validation results')

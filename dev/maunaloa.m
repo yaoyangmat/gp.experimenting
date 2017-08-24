@@ -5,8 +5,10 @@
 % Carl Edward Rasmussen, 2011-04-20.
 
 load mauna.txt
-z = mauna(:,2) ~= -99.99;                             % get rid of missing data
-year = mauna(z,1); co2 = mauna(z,2);       % extract year and CO2 concentration
+z = mauna(:,4) ~= -99.99;                             % get rid of missing data
+year = mauna(z,1); co2 = mauna(z,4);       % extract year and CO2 concentration
+month = mauna(z,2); month = (month-1)/12;
+year = year + month;
 
 x = year(year<2004); y = co2(year<2004);                        % training data
 xx = year(year>2004); yy = co2(year>2004);                          % test data
@@ -17,18 +19,23 @@ k3 = @covRQiso;                      % fluctations with different length-scales
 k4 = @covSEiso;                 % very short term (month to month) correlations 
 covfunc = {@covSum, {k1, k2, k3, k4}};                % add up covariance terms
 
-meanfunc = {@meanSum, {@meanLinear, @meanConst}};
+% meanfunc = {@meanSum, {@meanLinear, @meanConst}};
+meanfunc = [];
 
 hyp.cov = [4 4 0 0 1 4 0 0 -1 -2 -2]; 
 hyp.lik = -2;
-hyp.mean = [1.5 -2630]
+% hyp.mean = [1.6 -2630];
+hyp.mean = [];
 
-[hyp fX i] = ...                                             % fit the GP model
+[hyp, fX, i] = ...                                             % fit the GP model
      minimize(hyp, @gp, -500, @infExact, meanfunc, covfunc, @likGauss, x, y);
 
-zz = (2004+1/24:1/12:2024-1/24)';   % make predictions 20 years into the future
-[mu s2] = gp(hyp, @infExact, meanfunc, covfunc, @likGauss, x, y, zz);
+zz = (2004+1/24:1/12:2124-1/24)';   % make predictions 20 years into the future
+[mu, s2] = gp(hyp, @infExact, meanfunc, covfunc, @likGauss, x, y, zz);
 
+figure;
+hold on;
 f = [mu+2*sqrt(s2); flipdim(mu-2*sqrt(s2),1)];
-fill([zz; flipdim(zz,1)], f, [7 7 7]/8); hold on;           % show predictions
-plot(x,y,'b.'); plot(xx,yy,'r.')                               % with the data
+% fill([zz; flipdim(zz,1)], f, [7 7 7]/8); hold on;           % show predictions
+plot(x,y,'b.'); plot(xx,yy,'r.');                               % with the data
+plot(zz, mu);

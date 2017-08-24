@@ -1,4 +1,4 @@
-function [ rmse, time, params ] = runDist( MAX_NUM_EVAL, n_train, n_test, n_dim, n_responses, M )
+function [ rmse, time ] = runDist( MAX_NUM_EVAL, n_train, n_test, n_dim, n_responses, M )
 %% Setting up data - training and test
 % Create training data
 lb = zeros(1,n_dim);
