@@ -1,15 +1,16 @@
+function testDistributed()
 disp('-------------------------------')
 disp('Testing Distributed GP vs Full GP...')
 disp('-------------------------------')
 close all; clear all;
 %% Basic parameters
-MAX_NUM_EVAL = 30;         % Maximum allowed function evals
-n_train = 100000;             % Number of training points
-n_test = 5000;              % Number of test points
-n_dim = 10;                  % Size of UF1 problem
-n_responses = 2 ;           % Number of responses for UF1 problem
-M = 1000;                     % Number of sets for distributed GP
-%sn = 0.001;                   % Noise standard deviation. NOT INCLUDING NOISE for now (CHECK THIS OUT!!)
+MAX_NUM_EVAL = 150;              % Maximum allowed function evals
+n_train = 7000;                 % Number of training points
+n_test = 5000;                  % Number of test points
+n_dim = 20;                      % Size of UF1 problem
+n_responses = 2 ;               % Number of responses for UF1 problem
+M = 10;                        % Number of sets for distributed GP
+%sn = 0.001;                    % Noise standard deviation. NOT INCLUDING NOISE for now (CHECK THIS OUT!!)
 use_full = 0;
 %% Setting up data - training and test
 % Create training data
@@ -97,6 +98,7 @@ if use_full, fprintf('RMSE for full GP: %f\n', rmse_full); end
 fprintf('RMSE for distributed GP: %f\n', rmse_dgp)
 if use_full, fprintf('Time taken for full GP: %f\n', time_full); end
 fprintf('Time taken for distributed GP: %f\n', time_dgp)
+end
 
 %% HELPER FUNCTIONS
 function [X_split] = split_data(X, M)

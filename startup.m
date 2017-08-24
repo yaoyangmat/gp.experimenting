@@ -23,5 +23,6 @@ addpath([mydir,'util'])
 
 addpath([mydir,'dev'])
 addpath([mydir,'dev',filesep,'util'])
+addpath([mydir,'dev',filesep,'gp_demo'])
 
 clear me mydir
