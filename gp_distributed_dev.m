@@ -13,7 +13,8 @@ if nargin == 7 % training/optimising hyperparameters
         total_dnlZ_mean = zeros(M, numel(hyp.mean));
     end
     total_dnlZ_lik = zeros(M, numel(hyp.lik));
-    parfor i=1:M
+    %parfor i=1:M
+    for i = 1 : M
         [nlZ, dnlZ] = gp(hyp, inf, mean, cov, lik, x(i).data, y(i).data);
         total_nlZ(i) = nlZ;
         total_dnlZ_cov(i,:) = dnlZ.cov;
