@@ -3,10 +3,12 @@ function [ nlZ, dnlZ ] = gp_train( hyp, cov, x, y )
     % Hyperparameters
     % hyp = log([ell; sn; sy])
     
+    s = 1E-6;   % Stabilising noise
+    
     n = size(x,1);
     K = cov(hyp,x);
     
-    L = chol(K)';
+    L = chol(K + s*eye(n))';
     alpha = L'\(L\y);
     
     nlZ = 0.5*y'*alpha + sum(log(diag(L))) + 0.5*n*log(2*pi);

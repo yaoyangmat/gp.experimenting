@@ -18,14 +18,24 @@ stdX = std(x_train)';
 stdX( stdX./abs(mean(x_train))' < 100*eps ) = Inf; % Infinite lengthscale if range is negligible
 logtheta0 = log([stdX; std(y_train); 0.05*std(y_train)]);
 
-hyp = logtheta0;  
-cov = @kernel;
+hyp_t = logtheta0;  
+cov_t = @kernel;
+
+% Using GPML
+cov = {@covSum, {@covSEard,@covNoise}};
+lik = {@likGauss};  
+inf = @infGaussLik;
+
+hyp.cov = logtheta0;
+hyp.lik = logtheta0(end);   
 
 % Learn hyperparameters
-hyp = minimize(hyp,@gp_train,-MAX_NUM_EVAL,cov,x_train,y_train);      
+hyp_t = minimize(hyp_t,@gp_train,-MAX_NUM_EVAL,cov_t,x_train,y_train); 
+hyp = minimize(hyp, @gp, -MAX_NUM_EVAL, inf, [], cov, lik, x_train, y_train);
 
 % Predictions
-[ ymu, ys2 ] = gp_predict( hyp,cov,x_train,y_train,x_test );
+[ ymu, ys2 ] = gp_predict( hyp_t,cov_t,x_train,y_train,x_test );
+%[ ymu, ys2 ] = gp(hyp, inf, [], cov, lik, x_train, y_train, x_test);
 ys = sqrt(ys2);
 
 % Plot
