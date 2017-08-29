@@ -37,11 +37,11 @@ pred_bds = jbfill(x_test',ymu'+2*ys',ymu'-2*ys','b','k',1,0.2); % Fill in uncert
 legend('Training pts', 'True fn', 'Pred fn');
 
 subplot(3,1,2)
-p_imp = plot(x_test,e_improvement);
+e_imp = plot(x_test,e_improvement);
 ylabel('E(improvement)');
 
 subplot(3,1,3)
-e_imp = plot(x_test,p_improvement);
+p_imp = plot(x_test,p_improvement);
 ylabel('P(improvement)');
 
 WinOnTop(fig,true);
