@@ -1,3 +1,8 @@
+% This demo runs bayesian optimisation on the "Forrester function"
+% The two improvement criteria being compared are:
+% Probablility of improvement
+% Expectation of improvement
+
 clear all;clc;
 f = @(x) ((x.*6-2).^2).*sin((x.*6-2).*2);
 y_min = -10; 
@@ -17,14 +22,14 @@ ys = sqrt(ys2);
 
 % Calculate improvement criteria
 [optimal_y,idx] = min(y_train);
-p_improvement = get_improvement_criteria( 'P_improvement', gpdata, x_test, optimal_y );
 e_improvement = get_improvement_criteria( 'E_improvement', gpdata, x_test, optimal_y );
+p_improvement = get_improvement_criteria( 'P_improvement', gpdata, x_test, optimal_y );
 
 % Set up plot
-fig = figure; 
+fig = figure; scatter_sz = 100;
 set(gcf, 'Units', 'normalized', 'Position', [0.05, 0.05, 0.5, 0.8])
 subplot(3,1,1); ax = gca; 
-training_pts = scatter(x_train,y_train,'bx'); ylim([y_min,y_max]); hold on; 
+training_pts = scatter(x_train,y_train,scatter_sz,'bx'); ylim([y_min,y_max]); hold on; 
 true_fn = plot(x_test,y_test); ylim([y_min,y_max]);
 pred_fn = plot(x_test,ymu); ylim([y_min,y_max]);
 pred_bds = jbfill(x_test',ymu'+2*ys',ymu'-2*ys','b','k',1,0.2); % Fill in uncertainty bounds
@@ -32,12 +37,12 @@ pred_bds = jbfill(x_test',ymu'+2*ys',ymu'-2*ys','b','k',1,0.2); % Fill in uncert
 legend('Training pts', 'True fn', 'Pred fn');
 
 subplot(3,1,2)
-p_imp = plot(x_test,p_improvement);
-ylabel('P(improvement)');
+p_imp = plot(x_test,e_improvement);
+ylabel('E(improvement)');
 
 subplot(3,1,3)
-e_imp = plot(x_test,e_improvement);
-ylabel('E(improvement)');
+e_imp = plot(x_test,p_improvement);
+ylabel('P(improvement)');
 
 WinOnTop(fig,true);
 
@@ -45,11 +50,13 @@ WinOnTop(fig,true);
 n_iters = 100;
 for i = 1:n_iters    
     
-    % Pick a new input point, x_new, based on the maximum improvement
-    [optimal_i,idx] = max(p_improvement);
+    % Pick a new input point x_new based on improvement criteria
+    [optimal_i,idx] = max(e_improvement);
     x_new = x_test(idx);
     y_new = f(x_new);
     subplot(3,1,1); line = vline(x_new);
+    subplot(3,1,2); eline = vline(x_new);
+    subplot(3,1,3); pline = vline(x_new);
     
     prompt = 'Press any key to generate point, Quit (Q) ';
     x = input(prompt,'s');
@@ -73,21 +80,24 @@ for i = 1:n_iters
     e_improvement = get_improvement_criteria( 'E_improvement', gpdata, x_test, optimal_y );
 
     % Plot results
-    subplot(3,1,1); 
-    delete(line);
+    delete(line); delete(eline); delete(pline);
     delete(pred_fn);
     delete(pred_bds); 
-    training_pts = scatter(x_train,y_train,'bx'); ylim([y_min,y_max]); hold on; 
+    delete(e_imp);
+    delete(p_imp);
+    
+    subplot(3,1,1); 
+    training_pts = scatter(x_train,y_train,scatter_sz,'bx'); ylim([y_min,y_max]); hold on; 
     true_fn = plot(x_test,y_test); ylim([y_min,y_max]);
     pred_fn = plot(x_test,ymu); ylim([y_min,y_max]);
     pred_bds = jbfill(x_test',ymu'+2*ys',ymu'-2*ys','b','k',1,0.2); % Fill in uncertainty bounds
     
     subplot(3,1,2); 
-    delete(p_imp);
-    p_imp = plot(x_test,p_improvement);
+    e_imp = plot(x_test,e_improvement);
+    ylabel('E(improvement)');
     
     subplot(3,1,3);
-    delete(e_imp);
-    e_imp = plot(x_test,e_improvement);
+    p_imp = plot(x_test,p_improvement);
+    ylabel('P(improvement)');
    
 end
