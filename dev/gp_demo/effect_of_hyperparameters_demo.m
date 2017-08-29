@@ -10,13 +10,14 @@ x = linspace(-5,5,n_samples)';
 ell = [0.1, 1, 5]; 
 sf = 1;
 sy = exp(-4);
+cov = @kernel;
 
 figure;
 title('Effect of varying the length scale');
 hold on; 
 for i = 1:length(ell)
     hyp = log([ell(i); sf; sy]);
-    y = joint_sampling_demo(x,hyp);
+    y = gp_joint_sampling(x,hyp,cov);
     plot(x,y);
     legendInfo{i} = ['ell = ' num2str(ell(i))];
 end
@@ -31,7 +32,7 @@ title('Effect of varying signal noise');
 hold on; 
 for i = 1:length(sf)
     hyp = log([ell; sf(i); sy]);
-    y = joint_sampling_demo(x,hyp);
+    y = gp_joint_sampling(x,hyp,cov);
     plot(x,y);
     legendInfo{i} = ['sf = ' num2str(sf(i))];
 end
