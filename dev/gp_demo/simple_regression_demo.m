@@ -1,5 +1,5 @@
 % Attempt to fit a simple sin curve
-
+clear all; clc;
 %% Basic parameters
 MAX_NUM_EVAL = 50;              % Maximum allowed function evals
 n_train = 8;                   % Number of training points
@@ -22,20 +22,24 @@ hyp_t = logtheta0;
 cov_t = @kernel;
 
 % Using GPML
-cov = {@covSum, {@covSEard,@covNoise}};
-lik = {@likGauss};  
+%cov = {@covSum, {@covSEard,@covNoise}};
+%cov = {@covProd, {@covPeriodic, @covSEisoU}};
+cov = {@covPeriodic};
+lik = @likGauss;  
 inf = @infGaussLik;
+emptymean = [];
 
-hyp.cov = logtheta0;
+%hyp.cov = logtheta0;
+hyp.cov = log([stdX; 2*pi; 0.05*std(y_train)]);
 hyp.lik = logtheta0(end);   
 
 % Learn hyperparameters
 hyp_t = minimize(hyp_t,@gp_train,-MAX_NUM_EVAL,cov_t,x_train,y_train); 
-hyp = minimize(hyp, @gp, -MAX_NUM_EVAL, inf, [], cov, lik, x_train, y_train);
+hyp = minimize(hyp, @gp, -MAX_NUM_EVAL, inf, emptymean, cov, lik, x_train, y_train);
 
 % Predictions
-[ ymu, ys2 ] = gp_predict( hyp_t,cov_t,x_train,y_train,x_test );
-%[ ymu, ys2 ] = gp(hyp, inf, [], cov, lik, x_train, y_train, x_test);
+%[ ymu, ys2 ] = gp_predict( hyp_t,cov_t,x_train,y_train,x_test );
+[ ymu, ys2 ] = gp(hyp, inf, [], cov, lik, x_train, y_train, x_test);
 ys = sqrt(ys2);
 
 % Plot

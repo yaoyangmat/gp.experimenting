@@ -1,9 +1,10 @@
+function testSineDistributed()
 disp('-------------------------------')
 disp('Testing Distributed GP vs Full GP...')
 disp('-------------------------------')
 close all; clear all;
 %% Basic parameters
-MAX_NUM_EVAL = 50;         % Maximum allowed function evals
+MAX_NUM_EVAL = 10;         % Maximum allowed function evals
 n_train = 100;             % Number of training points
 n_test = 500;              % Number of test points
 M = 10;                     % Number of sets for distributed GP
@@ -19,7 +20,7 @@ y_train_rand = y_train(random_order);
 X_train_DGP = split_1d_data(X_train_rand, M);
 y_train_DGP = split_1d_data(y_train_rand, M);
 
-X_test = linspace(-5, 20, n_test)';
+X_test = linspace(-5, 10, n_test)';
 y_test = sin(X_test);
 
 %% Initialize hyp, cov, mean, lik
@@ -106,7 +107,7 @@ for i=1:length(methods)
     hold off;
 end
 foo = 1;
-
+end
 %% HELPER FUNCTIONS
 function [X_split] = split_1d_data(X, M)
     len = length(X);

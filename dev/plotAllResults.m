@@ -7,12 +7,12 @@ load('all_results_20.mat')
 
 figure;
 hold on;
-scatter([fgp_history.time], [fgp_history.rmse]);
-scatter([sgp_history.time], [sgp_history.rmse]);
-scatter([dgp_history.time], [dgp_history.rmse]);
+plot([fgp_history.time], [fgp_history.rmse],'d','MarkerFaceColor','b');
+plot([sgp_history.time], [sgp_history.rmse],'d','MarkerFaceColor','r');
+plot([dgp_history.time], [dgp_history.rmse],'d','MarkerFaceColor','y');
 ylabel('RMSE')
 %ylim([0 0.02])
 xlabel('Time taken for optimisation of hyperparameters')
 lg = legend('Full', 'Sparse', 'Distributed');
 lg.FontSize = 14;
-title('UF1 15 dimension GP validation results')
+title('UF1-15: GP validation results')
