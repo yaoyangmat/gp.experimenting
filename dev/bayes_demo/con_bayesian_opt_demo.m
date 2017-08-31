@@ -5,14 +5,13 @@ function con_bayesian_opt_demo()
 % Expectation of improvement (EI)
 
     % Set up basic parameters
-    f = @(x) ((x.*6-2).^2).*sin((x.*6-2).*2);           % Target function 
+    f = forrester_fn;                       % Target function 
+    f_con = forrester_constraint_fn;        % Constraint function
+    c_lim = [0]; 
+    c_type = ['>'];
     
-    pd1 = makedist('Normal',0.9,0.25);
-    pd2 = makedist('Normal',0,0.45);
-    f_con = @(x) 1.3 - pdf(pd1,x)- pdf(pd2,x);          % Constraint function
-
-    objectives = [ f ];
-    constraints = [ f_con ];
+    objectives = { f };
+    constraints = { f_con };
     
     acq_type = 'EI';
     
@@ -23,6 +22,8 @@ function con_bayesian_opt_demo()
     y_test = get_response(objectives, x_test);
     c_train = get_response(constraints, x_train);
     c_test = get_response(constraints, x_test);
+    
+    [ x_min, y_min, c_num ] = get_optimal( x_test, y_test, c_test, c_lim, c_type );
     
     % fmin = get_optimal_result(y_train, c_train);
     fmin = min(y_test);
@@ -112,19 +113,5 @@ function update_gp_plot(gpdata, x_test, y_test, y_min, y_max)
     plot(x_test,ymu); ylim([y_min,y_max]);
     jbfill(x_test',ymu'+2*ys',ymu'-2*ys','b','k',1,0.1); % Fill in uncertainty bounds
     legend('Training pts', 'True fn', 'Pred fn');
-end
-
-function [response] = get_response(fn_array, x)
-    if isempty(fn_array)
-        response = [];
-        return
-    end
-
-    n_fn = numel(fn_array);
-    response = zeros(size(x,1), n_fn);
-    for i = 1:n_fn
-        f = fn_array(i);
-        response(:,i) = f(x);
-    end
 end
 
