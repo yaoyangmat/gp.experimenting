@@ -10,20 +10,20 @@ full_n_train = [3000; 3500; 4000; 4500; 5000; 5500];
 
 %% Params for Sparse GP
 sparse_MAX_NUM_EVAL = 200;
-sparse_n_train = [3000; 4000; 5000; 6000; 7000; 8000];
+sparse_n_train = [9000; 10000];
 n_sparse = sparse_n_train/10;
 
 %% Params for Distributed GP
 dist_MAX_NUM_EVAL = 150;
-dist_n_train = [3000; 4000; 5000; 6000; 7000; 8000];
-M = dist_n_train/1000;
+dist_n_train = [8000; 10000];
+M = [4; 4];
 
 %% RUN AND SAVE
-fgp_history = run(full_MAX_NUM_EVAL, full_n_train, n_test, n_dim, n_responses, 'runFullUF1');
-sgp_history = run(sparse_MAX_NUM_EVAL, sparse_n_train, n_test, n_dim, n_responses, 'runSparseUF1', n_sparse);
-% dgp_history = run(dist_MAX_NUM_EVAL, dist_n_train, n_test, n_dim, n_responses, 'runDistUF1', M);
+% fgp_history = run(full_MAX_NUM_EVAL, full_n_train, n_test, n_dim, n_responses, 'runFullUF1');
+% sgp_history = run(sparse_MAX_NUM_EVAL, sparse_n_train, n_test, n_dim, n_responses, 'runSparseUF1', n_sparse);
+dgp_history = run(dist_MAX_NUM_EVAL, dist_n_train, n_test, n_dim, n_responses, 'runDistUF1', M);
 
-save('..\Test results\fgp_sgp_results_20.mat', 'fgp_history', 'sgp_history')
+save('dgp_results_20.mat', 'dgp_history')
 
 end
 
