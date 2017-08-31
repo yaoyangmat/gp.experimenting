@@ -1,5 +1,5 @@
-% load('all_results.mat')
-%load('all_results_20.mat')
+
+load('all_results_20_new.mat')
 
 figure; hold on;
 

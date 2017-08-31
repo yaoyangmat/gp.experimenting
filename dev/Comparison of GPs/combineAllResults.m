@@ -1,8 +1,8 @@
-a = load('all_results_10.mat');
-b = load('all_results.mat');
+a = load('fgp_sgp_results_20.mat');
+b = load('sgp_results_20.mat');
 
-n_a = length([a.dgp_history.rmse]);
-n_b = length([b.dgp_history.rmse]);
+n_a = length([a.fgp_history.rmse]);
+n_b = length([b.fgp_history.rmse]);
 
 fields = fieldnames(a);
 out = struct;
@@ -13,4 +13,4 @@ for i=1:length(fields)
     out.(field).params = cat(2, [a.(field).params], [b.(field).params]);
 end
 
-save('combined_results.mat', 'out')
+save('combined_results_20.mat', 'out')
