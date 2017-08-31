@@ -39,9 +39,9 @@ function history = run(MAX_NUM_EVAL, n_train, n_test, n_dim, n_responses, func_n
         history(i).time = time;
         history(i).params.num_eval = MAX_NUM_EVAL;
         history(i).params.n_train = n_train(i);
-        if strcmp(func_name, 'runSparse')
+        if strcmp(func_name, 'runSparseUF1')
             history(i).params.n_sparse = m(i);
-        elseif strcmp(func_name, 'runDist')
+        elseif strcmp(func_name, 'runDistUF1')
             history(i).params.M = m(i);
         end
     end
