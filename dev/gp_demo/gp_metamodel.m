@@ -47,7 +47,7 @@ switch Action
         L = gpdata.L;
         alpha = gpdata.alpha;
         
-        [Kss, Kstar] = gpdata.cov(gpdata.hyp,gpdata.X,Xs);
+        [Kss, Kstar] = gpdata.cov(gpdata.hyp, gpdata.X, Xs);
         Lk = L\Kstar;
         ymu = Kstar' * alpha;
         ys2 = Kss - sum(Lk.^2, 1)';
