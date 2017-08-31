@@ -24,13 +24,13 @@ dist_MAX_NUM_EVAL = 100;
 % dist_n_train = [700000];
 % M = [170];
 dist_n_train = [10000];
-M = [3]; % no. of experts
+M = [6]; % no. of experts
 
 %% RUN AND SAVE
 % fgp_history = runOnData(full_MAX_NUM_EVAL, X_train, y_train, X_test, y_test, full_n_train, 'runFullOnData');
 dgp_history = runOnData(dist_MAX_NUM_EVAL, X_train, y_train, X_test, y_test, dist_n_train, 'runDistOnData', M);
 
-save('DFcomparison8.mat', 'dgp_history')
+save('DFcomparison2.mat', 'dgp_history')
 
 end
 

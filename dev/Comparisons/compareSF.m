@@ -12,11 +12,11 @@ full_MAX_NUM_EVAL = 100;
 full_n_train = [2500; 3000];
 
 %% Params for Sparse GP
-sparse_MAX_NUM_EVAL = 100;
+sparse_MAX_NUM_EVAL = 200;
 % sparse_n_train = [10000; 10000; 10000; 10000; 10000; 10000; 10000; 10000; 10000; 10000];
 % n_sparse = [50; 100; 200; 300; 400; 500; 700; 900; 1200];
-sparse_n_train = [5000];
-n_sparse = [2500];
+sparse_n_train = [2000; 2000];
+n_sparse = [500; 1000];
 
 %% Params for Distributed GP
 % dist_MAX_NUM_EVAL = 100;
@@ -28,7 +28,7 @@ n_sparse = [2500];
 sgp_history = runOnData(sparse_MAX_NUM_EVAL, X_train, y_train, X_test, y_test, sparse_n_train, 'runSparseOnData', n_sparse);
 % dgp_history = runOnData(dist_MAX_NUM_EVAL, dist_n_train, n_test, n_dim, n_responses, 'runDist', M);
 
-save('SFcomparison10.mat', 'sgp_history')
+save('SFcomparison11.mat', 'sgp_history')
 
 end
 
