@@ -64,7 +64,7 @@ function update_plot(gpdata, x_test, y_test, improvement, x_new)
     vline(x_new);
 
     subplot(n_subplots,1,2)
-    plot(x_test,improvement);
+    plot(x_test,improvement,'LineWidth',1);
     ylabel('Improvement criteria');
     vline(x_new);
 
@@ -78,8 +78,8 @@ function update_gp_plot(gpdata, x_test, y_test, y_min, y_max)
     ys = sqrt(ys2);
 
     scatter(gpdata.X, gpdata.Y+gpdata.offset, scatter_sz,'bo','LineWidth',1); ylim([y_min,y_max]); hold on; 
-    plot(x_test,y_test); ylim([y_min,y_max]);
-    plot(x_test,ymu); ylim([y_min,y_max]);
+    plot(x_test,y_test,'LineWidth',1); ylim([y_min,y_max]);
+    plot(x_test,ymu,'LineWidth',1); ylim([y_min,y_max]);
     jbfill(x_test',ymu'+2*ys',ymu'-2*ys','b','k',1,0.1); % Fill in uncertainty bounds
     legend('Training pts', 'True fn', 'Pred fn');
 end

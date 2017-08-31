@@ -1,16 +1,11 @@
-% load('all_results.mat')
+
 load('all_results_20_new.mat')
 
-% fgp_history = out.fgp_history;
-% sgp_history = out.sgp_history;
-% dgp_history = out.dgp_history;
+figure; hold on;
 
-figure;
-
-sz = linspace(30,100,8);
-scatter([fgp_history.time], [fgp_history.rmse], sz, 'd', 'filled', 'MarkerEdgeColor', 'k'); hold on;
-scatter([sgp_history.time], [sgp_history.rmse], sz, 'd', 'filled', 'MarkerEdgeColor', 'k');
-scatter([dgp_history.time], [dgp_history.rmse], sz, 'd', 'filled', 'MarkerEdgeColor', 'k');
+scatter([fgp_history.time], [fgp_history.rmse], linspace(20,90,numel(fgp_history)), 'd', 'filled', 'MarkerEdgeColor', 'k');
+scatter([sgp_history.time], [sgp_history.rmse], linspace(20,90,numel(sgp_history)), 'd', 'filled', 'MarkerEdgeColor', 'k');
+scatter([dgp_history.time], [dgp_history.rmse], linspace(20,90,numel(dgp_history)), 'd', 'filled', 'MarkerEdgeColor', 'k');
 
 % plot([fgp_history.time], [fgp_history.rmse],'d','MarkerFaceColor','b');
 % plot([sgp_history.time], [sgp_history.rmse],'d','MarkerFaceColor','r');
@@ -19,7 +14,6 @@ scatter([dgp_history.time], [dgp_history.rmse], sz, 'd', 'filled', 'MarkerEdgeCo
 ylabel('RMSE')
 xlabel('Time taken')
 
-[lg, ~] =  legend('Full', 'Sparse', 'Distributed');
-lg.FontSize = 18;
-
-title('UF1-15: GP validation results')
+[lg, ~] =  legend({'Full', 'Sparse', 'Distributed'},'FontSize',14);
+%title('UF1-15: GP validation results')
+title('kin-40k: GP validation results')

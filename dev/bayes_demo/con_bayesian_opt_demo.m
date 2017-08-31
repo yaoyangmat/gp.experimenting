@@ -6,26 +6,31 @@ function con_bayesian_opt_demo()
 
     % Set up basic parameters
     f = @(x) ((x.*6-2).^2).*sin((x.*6-2).*2);           % Target function 
+    
+    pd1 = makedist('Normal',0.9,0.25);
+    pd2 = makedist('Normal',0,0.45);
+    f_con = @(x) 1.3 - pdf(pd1,x)- pdf(pd2,x);          % Constraint function
+
+    objectives = [ f ];
+    constraints = [ f_con ];
+    
     acq_type = 'EI';
     
     x_train = [0; 0.18; 0.25; 0.28; 0.5; 0.95; 1];
-    y_train = f(x_train);
-    n_test = 100;
-    x_test = linspace(0,1,n_test)';
-    y_test = f(x_test);
+    x_test = linspace(0,1,100)';
+
+    y_train = get_response(objectives, x_train);
+    y_test = get_response(objectives, x_test);
+    c_train = get_response(constraints, x_train);
+    c_test = get_response(constraints, x_test);
+    
+    % fmin = get_optimal_result(y_train, c_train);
     fmin = min(y_test);
     
     % Train surrogates 
     gpdata = gp_metamodel('Train', x_train, y_train);
-    
-    % Constraint function
-    pd1 = makedist('Normal',0.9,0.25);
-    pd2 = makedist('Normal',0,0.45);
-    f_constraint = @(x) 1.3 - pdf(pd1,x)- pdf(pd2,x);   
-    c_train = f_constraint(x_train);
-    c_test = f_constraint(x_test);
     c_gpdata = gp_metamodel('Train', x_train, c_train);
-
+    
     % Set up plot
     fig = figure; 
     set(gcf, 'Units', 'normalized', 'Position', [0.5, 0.05, 0.5, 0.8])
@@ -38,7 +43,7 @@ function con_bayesian_opt_demo()
         [optimal_y,~] = min(y_train);
         [improvement,x_new] = get_update_1d( acq_type, gpdata, x_test, optimal_y );
         y_new = f(x_new);
-        c_new = f_constraint(x_new);
+        c_new = f_con(x_new);
         
         % Print results
         diff = optimal_y - fmin;
@@ -107,5 +112,19 @@ function update_gp_plot(gpdata, x_test, y_test, y_min, y_max)
     plot(x_test,ymu); ylim([y_min,y_max]);
     jbfill(x_test',ymu'+2*ys',ymu'-2*ys','b','k',1,0.1); % Fill in uncertainty bounds
     legend('Training pts', 'True fn', 'Pred fn');
+end
+
+function [response] = get_response(fn_array, x)
+    if isempty(fn_array)
+        response = [];
+        return
+    end
+
+    n_fn = numel(fn_array);
+    response = zeros(size(x,1), n_fn);
+    for i = 1:n_fn
+        f = fn_array(i);
+        response(:,i) = f(x);
+    end
 end
 
