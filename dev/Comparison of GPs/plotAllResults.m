@@ -1,5 +1,5 @@
 % load('all_results.mat')
-load('all_results_15.mat')
+load('all_results_20.mat')
 
 % fgp_history = out.fgp_history;
 % sgp_history = out.sgp_history;
@@ -17,9 +17,9 @@ scatter([dgp_history.time], [dgp_history.rmse], sz, 'd', 'filled', 'MarkerEdgeCo
 % plot([dgp_history.time], [dgp_history.rmse],'d','MarkerFaceColor','y');
 
 ylabel('RMSE')
-xlabel('Time taken for optimisation of hyperparameters')
+xlabel('Time taken')
 
 [lg, ~] =  legend('Full', 'Sparse', 'Distributed');
 lg.FontSize = 18;
 
-title('UF1-20: GP validation results')
+title('UF1-15: GP validation results')
