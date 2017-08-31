@@ -11,7 +11,7 @@ M = 10;                     % Number of sets for distributed GP
 %sn = 0.001;                   % Noise standard deviation. NOT INCLUDING NOISE for now (CHECK THIS OUT!!)
 %% Setting up data - training and test
 X_train = linspace(-5,5,n_train)';
-y_train = sin(X_train);
+y_train = sin(X_train) + normrnd(0, 0.05, n_train, 1);
 
 % Randomly split training data into M sets for distributed GP
 random_order = randperm(n_train);
@@ -29,22 +29,22 @@ stdX = std(X_train)';
 stdX( stdX./abs(mean(X_train))' < 100*eps ) = Inf; % Infinite lengthscale if range is negligible
 logtheta0 = log([stdX; std(y_train); 0.05*std(y_train)]);
 
-hyp=[];inf=[];lik=[];cov=[];
+f_hyp=[];inf=[];lik=[];cov=[];
 cov = {@covSum, {@covSEard,@covNoise}}; 
-hyp.cov = logtheta0;  
+f_hyp.cov = logtheta0;  
 emptymean = [];
 lik = {@likGauss};    
-hyp.lik = logtheta0(end);
+f_hyp.lik = logtheta0(end);
 inf = @infGaussLik;
 
 %% Use Full GP
 fprintf('Optimising hyperparameters for full GP...\n')
 tic;
-hyp = minimize_minfunc(hyp,@gp,-MAX_NUM_EVAL,inf,emptymean,cov,lik,X_train,y_train);      
+f_hyp = minimize_minfunc(f_hyp,@gp,-MAX_NUM_EVAL,inf,emptymean,cov,lik,X_train,y_train);      
 time_full = toc;
 
 % Generate predictions
-[ymu,ys2] = gp(hyp,inf,emptymean,cov,lik,X_train,y_train,X_test);                 % dense prediction
+[ymu,ys2] = gp(f_hyp,inf,emptymean,cov,lik,X_train,y_train,X_test);                 % dense prediction
 rmse_full = compute_RMSE(ymu,y_test);
 
 %% Initialize hyp, cov, mean, lik again
@@ -53,14 +53,6 @@ stdX = std(X_train)';
 stdX( stdX./abs(mean(X_train))' < 100*eps ) = Inf; % Infinite lengthscale if range is negligible
 logtheta0 = log([stdX; std(y_train); 0.05*std(y_train)]);
 
-hyp=[];inf=[];lik=[];cov=[];
-cov = {@covSum, {@covSEard,@covNoise}}; 
-hyp.cov = logtheta0;
-emptymean = [];
-lik = {@likGauss};    
-hyp.lik = logtheta0(end);
-inf = @infGaussLik;
-
 %% Optimise hyperparameters for distributed GP
 methods = {'PoE', 'gPoE', 'BCM', 'rBCM'};
 % ymu_dgp_store = zeros(n_test, length(methods));
@@ -68,6 +60,13 @@ methods = {'PoE', 'gPoE', 'BCM', 'rBCM'};
 % rmse_dgp_store = zeros(length(methods));
 dgp_history = struct;
 for method = methods
+    hyp=[];inf=[];lik=[];cov=[];
+    cov = {@covSum, {@covSEard,@covNoise}};
+    hyp.cov = logtheta0;
+    emptymean = [];
+    lik = {@likGauss};
+    hyp.lik = logtheta0(end);
+    inf = @infGaussLik;
     fprintf('Optimising hyperparameters...\n')
     tic;
     hyp = minimize_minfunc(hyp,@gp_distributed_dev,-MAX_NUM_EVAL,inf,emptymean,cov,lik,X_train_DGP,y_train_DGP);
